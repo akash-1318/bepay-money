@@ -1,28 +1,29 @@
 @import "tailwindcss";
 
-:root {
-  --bg-primary: #080808;
-  --bg-secondary: white;
-  --bg-card: #F0F0F099;
-  --bg-card-hover: #F0F0F099;
-  --border: #B5B5B5;
-  --border-subtle: #B5B5B5;
-  --text-primary: #212121;
-  --text-secondary: #333232;
-  --text-muted: black;
-  --accent: #212121;
-  --accent-hover: #212121d8;
-  --accent-dim: rgba(108, 99, 255, 0.15);
-  --green: #22c55e;
-  --green-dim: rgba(34, 197, 94, 0.15);
-  --yellow: #f59e0b;
-  --yellow-dim: rgba(245, 158, 11, 0.15);
-  --red: #ef4444;
-  --red-dim: rgba(239, 68, 68, 0.15);
-  --blue: #3b82f6;
-  --blue-dim: rgba(59, 130, 246, 0.15);
+@theme {
+  /* Color */
+  --font-sans: "Montserrat", sans-serif;
+  --color-primary: #080808;
+  --color-secondary: #FFFFFF;
+  --color-text-primary: #212121;
+  --color-text-secondary: #6B6B6B;
+  --color-grey-light: #848484;
+  --color-dark: #000000;
+  --color-border: #CECECE80;
+  --color-bg-card: #F0F0F099;
+  --color-success: #38804f;
+  --color-failed: #b65455;
+  --color-pending: #f18c12;
+  --color-link: #1486ff;
+
+  /* Border Radius */
+  --radius-lg: 18px;
+  --radius-md: 10px;
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-primary);
+  }
 }
