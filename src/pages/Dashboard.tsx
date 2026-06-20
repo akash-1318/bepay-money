@@ -1,6 +1,6 @@
 const Dashboard: React.FC = () => {
     return (
-        <>Helloooo</>
+        <div className="border-8 h-36 text-amber-50">helloo</div>
     )
 }
 

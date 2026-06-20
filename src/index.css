@@ -10,11 +10,12 @@
   --color-grey-light: #848484;
   --color-dark: #000000;
   --color-border: #CECECE80;
-  --color-bg-card: #F0F0F099;
+  --color-bg-card: #F0F0F0;
   --color-success: #38804f;
   --color-failed: #b65455;
   --color-pending: #f18c12;
   --color-link: #1486ff;
+  --color-inactive: #B5B5B5;
 
   /* Border Radius */
   --radius-lg: 18px;
