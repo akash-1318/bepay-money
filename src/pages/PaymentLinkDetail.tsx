@@ -10,11 +10,11 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 const PaymentLinkDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    
+
     const [loading, setLoading] = useState(true);
     const [linkData, setLinkData] = useState<PaymentLink | null>(null);
     const [transaction, setTransaction] = useState<Transaction | null>(null);
-    
+
     const [copied, setCopied] = useState(false);
     const [simulating, setSimulating] = useState(false);
     const timerRef = useRef<any>(null);
@@ -99,7 +99,7 @@ const PaymentLinkDetail: React.FC = () => {
     const isActive = linkData.status === 'active' && !isExpired;
 
     return (
-        <div className="flex flex-col gap-6 w-full max-w-[1000px] mx-auto">
+        <div className="flex flex-col gap-6 w-full max-w-250 mx-auto">
             {/* Page Header */}
             <div className="flex items-center gap-3">
                 <Button
@@ -110,12 +110,12 @@ const PaymentLinkDetail: React.FC = () => {
                 >
                     <ArrowLeft className="w-4 h-4 text-black" />
                 </Button>
-                <h1 className="text-[22px] font-bold text-black font-sans">Payment Link Details</h1>
+                <h1 className="page-title">Payment Link Details</h1>
             </div>
 
             {/* Split Details Container */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
+
                 {/* Main Details */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {isPaid && (
@@ -138,18 +138,18 @@ const PaymentLinkDetail: React.FC = () => {
                         <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-100 rounded-[15px] text-[#1486ff]">
                             <Clock className="w-5 h-5 shrink-0 animate-pulse" />
                             <div className="text-sm font-semibold font-sans">
-                                Active and awaiting payment. Expiring on {new Date(linkData.expiresAt).toLocaleDateString()} at {new Date(linkData.expiresAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.
+                                Active and awaiting payment. Expiring on {new Date(linkData.expiresAt).toLocaleDateString()} at {new Date(linkData.expiresAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
                             </div>
                         </div>
                     )}
 
-                    <div className="bg-white border border-inactive rounded-[20px] p-6 md:p-8 flex flex-col gap-6">
+                    <div className="card-container p-6 md:p-8 flex flex-col gap-6">
                         <div className="border-b border-gray-100 pb-5">
                             <span className="text-xs font-semibold text-text-muted uppercase tracking-wider block mb-1">
                                 PAYMENT LINK FOR
                             </span>
                             <h2 className="text-2xl font-bold text-black mb-3 font-sans">{linkData.title}</h2>
-                            <div className="text-[32px] font-extrabold text-black tracking-tight font-sans">
+                            <div className="text-amount font-extrabold text-black tracking-tight font-sans">
                                 {parseFloat(linkData.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-xl text-text-secondary font-semibold">{linkData.currency}</span>
                             </div>
                         </div>
@@ -226,11 +226,11 @@ const PaymentLinkDetail: React.FC = () => {
 
                 {/* Sidebar */}
                 <div className="flex flex-col gap-6">
-                    <div className="bg-white border border-inactive rounded-[20px] p-6 flex flex-col items-center justify-center text-center shadow-sm">
+                    <div className="card-container p-6 flex flex-col items-center justify-center text-center">
                         <span className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-4 block">
                             SCAN QR TO PAY
                         </span>
-                        
+
                         <div className="p-3 bg-gray-50 border border-gray-100 rounded-xl mb-4">
                             <QRCodeSVG value={linkData.paymentUrl} size={150} />
                         </div>
@@ -294,7 +294,7 @@ const PaymentLinkDetail: React.FC = () => {
 
             {/* Receipt once paid */}
             {isPaid && transaction && (
-                <div className="bg-white border border-inactive rounded-[20px] p-6 md:p-8 flex flex-col gap-5 mt-2 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300 font-sans">
+                <div className="card-container p-6 md:p-8 flex flex-col gap-5 mt-2 animate-in fade-in slide-in-from-bottom-2 duration-300 font-sans">
                     <div className="border-b border-gray-100 pb-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         <div>
                             <h3 className="text-base font-bold text-black font-sans">Associated Payment Transaction</h3>

@@ -19,7 +19,7 @@ import {
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
-    
+
     // API states
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState<DashboardSummary>({
@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
         try {
             const sumData = await api.getDashboardSummary(timeframe);
             setSummary(sumData);
-            
+
             const txData = await api.getTransactions({
                 page: 1,
                 limit: 5
@@ -66,18 +66,18 @@ const Dashboard: React.FC = () => {
     return (
         <div className="flex flex-col gap-6 w-full">
             {/* Header / Topbar */}
-            <div className="flex flex-col gap-5 md:gap-3 md:flex-row items-center justify-between mb-2">
+            <div className="flex flex-col sm:items-baseline gap-5 md:gap-3 md:flex-row md:items-center justify-between mb-2">
                 <div>
-                    <h2 className="text-[22px] text-black font-semibold font-sans">Welcome, Nehal</h2>
+                    <h2 className="page-title">Welcome, Nehal</h2>
                     <p className="text-xs text-text-secondary mt-0.5 font-sans">Here's what's happening with your business today.</p>
                 </div>
-                
+
                 {/* Controls */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <select
                         value={timeframe}
                         onChange={(e) => setTimeframe(e.currentTarget.value as any)}
-                        className="h-10 px-3.5 border border-gray-200 rounded-lg text-sm bg-white text-black outline-none focus:ring-1 focus:ring-gray-300 cursor-pointer font-sans font-medium"
+                        className="form-input h-10 px-3.5 cursor-pointer font-medium"
                     >
                         {TIMEFRAME_OPTIONS.map(opt => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -93,11 +93,10 @@ const Dashboard: React.FC = () => {
                     >
                         <RefreshCw className={`w-4 h-4 text-gray-500 ${loading ? 'animate-spin' : ''}`} />
                     </Button>
-                    
+
                     <Button
-                        size="lg"
-                        className="text-base p-5 hover:bg-neutral-800 cursor-pointer"
                         onClick={() => navigate('/payment-links/create')}
+                        className="btn-primary h-10 px-5"
                     >
                         <span className="text-sm">+ Create Payment Link</span>
                     </Button>
@@ -154,7 +153,7 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 {/* Table */}
-                <div className="w-full bg-white border border-inactive rounded-[20px] overflow-hidden shadow-sm relative">
+                <div className="card-container w-full overflow-hidden relative">
                     <Table>
                         <TableHeader className="bg-white">
                             <TableRow className="border-b border-gray-100 hover:bg-transparent">
@@ -177,10 +176,10 @@ const Dashboard: React.FC = () => {
                                     >
                                         <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">{payment.id}</TableCell>
                                         <TableCell className="py-4 px-6 text-sm font-medium font-sans text-gray-500">{payment.externalReference || '—'}</TableCell>
-                                        <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black font-semibold">{payment.originalPrice}</TableCell>
+                                        <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">{payment.originalPrice}</TableCell>
                                         <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
                                             <div className="inline-flex items-center gap-2">
-                                                <div className="inline-flex items-center justify-center w-[22px] h-[22px] bg-success-bg border border-success-border rounded-md text-success-icon">
+                                                <div className="inline-flex items-center justify-center w-5.5 h-5.5 bg-success-bg border border-success-border rounded-md text-success-icon">
                                                     <ArrowDown className="w-3.5 h-3.5 stroke-[3.5]" />
                                                 </div>
                                                 <span>{payment.amountReceivedVal} {payment.amountReceivedUnit}</span>

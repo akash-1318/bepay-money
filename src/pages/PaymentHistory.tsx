@@ -104,21 +104,21 @@ const PaymentHistory: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6 w-full relative">
+        <div className="flex flex-col gap-6 w-full relative font-sans">
             {/* Top Toolbar */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
-                <h1 className="text-[22px] font-bold text-black font-sans">Payments</h1>
+                <h1 className="page-title">Payments</h1>
 
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Search */}
-                    <div className="relative min-w-[240px]">
+                    <div className="relative min-w-60">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
                             type="text"
                             placeholder="Search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
-                            className="pl-9 pr-3 h-10 bg-white border border-gray-200 rounded-lg text-sm placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-gray-300"
+                            className="form-input pl-9 pr-3 h-10 w-full"
                         />
                     </div>
 
@@ -133,7 +133,7 @@ const PaymentHistory: React.FC = () => {
                             <SlidersHorizontal className="w-4 h-4" />
                             <span>Filters</span>
                             {statusFilter !== 'ALL' && (
-                                <span className="ml-1 px-1.5 py-0.25 text-[10px] font-semibold bg-gray-100 text-gray-800 rounded-full">
+                                <span className="ml-1 px-1.5 py-px text-[10px] font-semibold bg-gray-100 text-gray-800 rounded-full">
                                     {statusFilter}
                                 </span>
                             )}
@@ -142,7 +142,7 @@ const PaymentHistory: React.FC = () => {
                         {isDropdownOpen && (
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
-                                <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-md p-1 z-50 animate-in fade-in-0 zoom-in-95 duration-100">
+                                <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-md p-1 z-50 animate-in fade-in-0 zoom-in-95 duration-100 font-sans">
                                     <div className="px-2 py-1.5 text-xs font-semibold text-gray-500">
                                         Filter by Status
                                     </div>
@@ -154,9 +154,8 @@ const PaymentHistory: React.FC = () => {
                                                 setStatusFilter(status);
                                                 setIsDropdownOpen(false);
                                             }}
-                                            className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${
-                                                statusFilter === status ? 'bg-gray-50 font-semibold' : ''
-                                            }`}
+                                            className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === status ? 'bg-gray-50 font-semibold' : ''
+                                                }`}
                                         >
                                             {status === 'ALL' ? 'All Payments' : status.charAt(0) + status.slice(1).toLowerCase()}
                                         </button>
@@ -180,8 +179,7 @@ const PaymentHistory: React.FC = () => {
                     {/* Export */}
                     <Button
                         onClick={handleExport}
-                        size="lg"
-                        className="text-base p-5 hover:bg-neutral-800 cursor-pointer"
+                        className="btn-primary h-10 px-5"
                     >
                         <span className="text-sm">Export</span>
                     </Button>
@@ -189,7 +187,7 @@ const PaymentHistory: React.FC = () => {
             </div>
 
             {/* Table */}
-            <div className="w-full bg-white border border-inactive rounded-[20px] overflow-hidden shadow-sm relative">
+            <div className="card-container w-full overflow-hidden relative">
                 <Table>
                     <TableHeader className="bg-white">
                         <TableRow className="border-b border-gray-100 hover:bg-transparent">
@@ -216,7 +214,7 @@ const PaymentHistory: React.FC = () => {
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">{payment.originalPrice}</TableCell>
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
                                         <div className="inline-flex items-center gap-2">
-                                            <div className="inline-flex items-center justify-center w-[22px] h-[22px] bg-success-bg border border-success-border rounded-md text-success-icon">
+                                            <div className="inline-flex items-center justify-center w-5.5 h-5.5 bg-success-bg border border-success-border rounded-md text-success-icon">
                                                 <ArrowDown className="w-3.5 h-3.5 stroke-[3.5]" />
                                             </div>
                                             <span>{payment.amountReceivedVal} {payment.amountReceivedUnit}</span>
@@ -224,7 +222,7 @@ const PaymentHistory: React.FC = () => {
                                     </TableCell>
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
                                         <div className="inline-flex items-center gap-2">
-                                            <div className="inline-flex items-center justify-center w-[22px] h-[22px] bg-danger-bg border border-danger-border rounded-md text-danger-icon">
+                                            <div className="inline-flex items-center justify-center w-5.5 h-5.5 bg-danger-bg border border-danger-border rounded-md text-danger-icon">
                                                 <ArrowUp className="w-3.5 h-3.5 stroke-[3.5]" />
                                             </div>
                                             <span>{payment.amountSentVal} {payment.amountSentUnit}</span>

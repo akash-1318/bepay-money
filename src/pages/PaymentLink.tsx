@@ -18,7 +18,7 @@ import type { PaymentLink as PaymentLinkType } from '@/types/api';
 
 const PaymentLink: React.FC = () => {
     const navigate = useNavigate();
-    
+
     const {
         loading,
         links,
@@ -31,7 +31,7 @@ const PaymentLink: React.FC = () => {
         setStatusFilter,
         refresh
     } = usePaymentLinks();
-    
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const timerRef = useRef<any>(null);
@@ -54,18 +54,18 @@ const PaymentLink: React.FC = () => {
         <div className="flex flex-col gap-6 w-full">
             {/* Top Toolbar */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
-                <h1 className="text-[22px] font-bold text-black font-sans">Payment Links</h1>
+                <h1 className="page-title">Payment Links</h1>
 
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Search */}
-                    <div className="relative min-w-[240px]">
+                    <div className="relative min-w-60">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
                             type="text"
                             placeholder="Search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
-                            className="pl-9 pr-3 h-10 bg-white border border-gray-200 rounded-lg text-sm placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-gray-300"
+                            className="form-input pl-9 pr-3 h-10 w-full"
                         />
                     </div>
 
@@ -80,7 +80,7 @@ const PaymentLink: React.FC = () => {
                             <SlidersHorizontal className="w-4 h-4" />
                             <span>Filters</span>
                             {statusFilter !== 'ALL' && (
-                                <span className="ml-1 px-1.5 py-0.25 text-[10px] font-semibold bg-gray-100 text-gray-800 rounded-full">
+                                <span className="ml-1 px-1.5 py-px text-[10px] font-semibold bg-gray-100 text-gray-800 rounded-full">
                                     {statusFilter}
                                 </span>
                             )}
@@ -101,9 +101,8 @@ const PaymentLink: React.FC = () => {
                                                 setStatusFilter(status);
                                                 setIsDropdownOpen(false);
                                             }}
-                                            className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${
-                                                statusFilter === status ? 'bg-gray-50 font-semibold' : ''
-                                            }`}
+                                            className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === status ? 'bg-gray-50 font-semibold' : ''
+                                                }`}
                                         >
                                             {status === 'ALL' ? 'All Links' : status.charAt(0) + status.slice(1).toLowerCase()}
                                         </button>
@@ -126,9 +125,8 @@ const PaymentLink: React.FC = () => {
 
                     {/* Create Link */}
                     <Button
-                        size="lg"
-                        className="text-base p-5 hover:bg-neutral-800 cursor-pointer"
                         onClick={() => navigate('/payment-links/create')}
+                        className="btn-primary h-10 px-5"
                     >
                         <span className="text-sm">+ Create Payment Link</span>
                     </Button>
@@ -136,7 +134,7 @@ const PaymentLink: React.FC = () => {
             </div>
 
             {/* Table */}
-            <div className="w-full bg-white border border-inactive rounded-[20px] overflow-hidden shadow-sm relative">
+            <div className="card-container w-full overflow-hidden relative">
                 <Table>
                     <TableHeader className="bg-white">
                         <TableRow className="border-b border-gray-100 hover:bg-transparent">
@@ -166,7 +164,7 @@ const PaymentLink: React.FC = () => {
                                             )}
                                         </div>
                                     </TableCell>
-                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black font-semibold">
+                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
                                         {parseFloat(link.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })} {link.currency}
                                     </TableCell>
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans text-gray-500 uppercase">{link.network}</TableCell>
