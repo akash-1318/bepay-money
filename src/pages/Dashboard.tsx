@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MetricCard from "@/components/dashboard/MetricCard";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Clock, RefreshCw, TrendingUp, XCircle, ArrowRight, ArrowDown } from "lucide-react";
+import { CheckCircle, Clock, RefreshCw, TrendingUp, XCircle, ArrowRight, ArrowDown, Loader2 } from "lucide-react";
 import { api } from '@/services/api';
 import type { DashboardSummary, Transaction } from '@/types/api';
 import { TIMEFRAME_OPTIONS } from '@/constants/options';
@@ -62,6 +62,15 @@ const Dashboard: React.FC = () => {
             year: 'numeric'
         });
     };
+
+    if (loading && summary.totalReceived === 0 && recentTx.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-black" />
+                <p className="text-sm font-medium text-text-secondary font-sans">Loading dashboard...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col gap-6 w-full">

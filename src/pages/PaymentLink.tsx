@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, SlidersHorizontal, ArrowRight, Copy, Check, RefreshCw } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowRight, Copy, Check, RefreshCw, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -148,7 +148,16 @@ const PaymentLink: React.FC = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {links.length > 0 ? (
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={7} className="py-12 text-center text-gray-400 text-sm font-medium font-sans">
+                                    <div className="flex flex-col items-center justify-center gap-3">
+                                        <Loader2 className="w-8 h-8 animate-spin text-black" />
+                                        <p className="text-sm font-medium text-text-secondary font-sans">Loading payment links...</p>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ) : links.length > 0 ? (
                             links.map((link) => (
                                 <TableRow
                                     key={link.id}

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Search, SlidersHorizontal, ArrowDown, ArrowUp, RefreshCw } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowDown, ArrowUp, RefreshCw, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +15,7 @@ import { useTransactions } from '@/hooks/useTransactions';
 import { PaginationControls } from '@/components/shared/PaginationControls';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { TransactionDetailModal } from '@/components/shared/TransactionDetailModal';
+import { useState } from 'preact/hooks';
 
 const PaymentHistory: React.FC = () => {
     const {
@@ -202,7 +202,16 @@ const PaymentHistory: React.FC = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {transactions.length > 0 ? (
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={8} className="py-12 text-center text-gray-400 text-sm font-medium font-sans">
+                                    <div className="flex flex-col items-center justify-center gap-3">
+                                        <Loader2 className="w-8 h-8 animate-spin text-black" />
+                                        <p className="text-sm font-medium text-text-secondary font-sans">Loading payments...</p>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ) : transactions.length > 0 ? (
                             transactions.map((payment) => (
                                 <TableRow
                                     key={payment.id}

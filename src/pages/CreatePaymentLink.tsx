@@ -238,7 +238,7 @@ const CreatePaymentLink: React.FC = () => {
                         </Button>
                         <Button
                             type="submit"
-                            className="btn-primary"
+                            className="btn-primary h-10"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
