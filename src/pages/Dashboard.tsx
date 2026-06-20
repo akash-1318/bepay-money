@@ -38,7 +38,6 @@ const Dashboard: React.FC = () => {
         try {
             const sumData = await api.getDashboardSummary(timeframe);
             setSummary(sumData);
-
             const txData = await api.getTransactions({
                 page: 1,
                 limit: 5
