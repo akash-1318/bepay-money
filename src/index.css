@@ -21,6 +21,18 @@
   --color-pending: #f18c12;
   --color-link: #1486ff;
   --color-inactive: #B5B5B5;
+  --color-text-muted: #A9A9A9;
+  --color-bg-zebra: #E6E6E666;
+  --color-success-bg: #E8F8EE;
+  --color-success-border: #C5EED3;
+  --color-success-icon: #27C263;
+  --color-danger-bg: #FCEAEA;
+  --color-danger-border: #F6C6C6;
+  --color-danger-icon: #EA5455;
+  --color-badge-confirmed: #2A7E4B;
+  --color-badge-pending: #F59E0B;
+  --color-badge-failed: #EF4444;
+  --color-badge-expired: #B45454;
 
   /* Border Radius */
   --radius-lg: 18px;
