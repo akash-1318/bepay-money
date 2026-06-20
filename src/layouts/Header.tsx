@@ -30,6 +30,12 @@ export const Header: React.FC<HeaderProps> = ({
     currentPath,
 }) => {
     const currentTitle = useMemo(() => {
+        if (currentPath === '/payment-links/create') {
+            return 'Create Payment Link';
+        }
+        if (currentPath.startsWith('/payment-links/')) {
+            return 'Payment Link Detail';
+        }
         return NAVIGATION_ITEMS.find((item) => item.to === currentPath)?.label || 'Dashboard';
     }, [currentPath]);
 
@@ -42,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
                     aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
                     aria-expanded={isSidebarOpen}
                 >
-                    {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-6 h-6" color="grey" />}
+                    {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-6 h-6 text-gray-500" />}
                 </button>
                 <h1 className="text-secondary md:ml-4.75 font-semibold text-xl m-0">{currentTitle}</h1>
 

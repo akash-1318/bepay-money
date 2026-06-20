@@ -1,15 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { Search, SlidersHorizontal, ArrowDown, ArrowUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, SlidersHorizontal, ArrowDown, ArrowUp, RefreshCw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
 import {
     Table,
     TableHeader,
@@ -18,203 +10,107 @@ import {
     TableHead,
     TableCell,
 } from '@/components/ui/table';
-
-interface PaymentRecord {
-    paymentId: string;
-    orderId: string;
-    originalPrice: string;
-    amountReceivedVal: string;
-    amountReceivedUnit: string;
-    amountSentVal: string;
-    amountSentUnit: string;
-    status: 'CONFIRMED' | 'PENDING' | 'FAILED' | 'EXPIRED';
-    date: string;
-    time: string;
-}
-
-const MOCK_PAYMENTS: PaymentRecord[] = [
-    {
-        paymentId: '5193732662',
-        orderId: '',
-        originalPrice: '2.50 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000045556',
-        amountSentUnit: 'ETH',
-        status: 'CONFIRMED',
-        date: '21 Sep 2025',
-        time: '10:00 AM',
-    },
-    {
-        paymentId: '5193732666',
-        orderId: '',
-        originalPrice: '3.75 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000068334',
-        amountSentUnit: 'ETH',
-        status: 'CONFIRMED',
-        date: '22 Sep 2025',
-        time: '10:10 AM',
-    },
-    {
-        paymentId: '5193732663',
-        orderId: '',
-        originalPrice: '5.00 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000099112',
-        amountSentUnit: 'ETH',
-        status: 'EXPIRED',
-        date: '23 Sep 2025',
-        time: '10:20 AM',
-    },
-    {
-        paymentId: '5193732665',
-        orderId: '',
-        originalPrice: '6.25 USD',
-        amountReceivedVal: '0.000022778',
-        amountReceivedUnit: 'ETH',
-        amountSentVal: '0.000113890',
-        amountSentUnit: 'ETH',
-        status: 'PENDING',
-        date: '24 Sep 2025',
-        time: '10:30 AM',
-    },
-    {
-        paymentId: '5193732661',
-        orderId: '',
-        originalPrice: '7.50 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000136668',
-        amountSentUnit: 'ETH',
-        status: 'FAILED',
-        date: '25 Sep 2025',
-        time: '10:40 AM',
-    },
-    {
-        paymentId: '5193732667',
-        orderId: '',
-        originalPrice: '8.75 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000159446',
-        amountSentUnit: 'ETH',
-        status: 'CONFIRMED',
-        date: '26 Sep 2025',
-        time: '10:50 AM',
-    },
-    {
-        paymentId: '5193732664',
-        orderId: '',
-        originalPrice: '10.00 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000182224',
-        amountSentUnit: 'ETH',
-        status: 'EXPIRED',
-        date: '27 Sep 2025',
-        time: '11:00 AM',
-    },
-    {
-        paymentId: '5193732668',
-        orderId: '',
-        originalPrice: '11.25 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000205002',
-        amountSentUnit: 'ETH',
-        status: 'PENDING',
-        date: '28 Sep 2025',
-        time: '11:10 AM',
-    },
-    {
-        paymentId: '5193732660',
-        orderId: '',
-        originalPrice: '12.50 USD',
-        amountReceivedVal: '0.997292',
-        amountReceivedUnit: 'USDC',
-        amountSentVal: '0.000227780',
-        amountSentUnit: 'ETH',
-        status: 'CONFIRMED',
-        date: '29 Sep 2025',
-        time: '11:20 AM',
-    },
-];
+import { api } from '@/services/api';
+import type { Transaction } from '@/types/api';
+import { useTransactions } from '@/hooks/useTransactions';
+import { PaginationControls } from '@/components/shared/PaginationControls';
+import { StatusBadge } from '@/components/shared/StatusBadge';
+import { TransactionDetailModal } from '@/components/shared/TransactionDetailModal';
 
 const PaymentHistory: React.FC = () => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'ALL' | 'CONFIRMED' | 'PENDING' | 'FAILED' | 'EXPIRED'>('ALL');
+    const {
+        loading,
+        transactions,
+        totalCount,
+        currentPage,
+        searchQuery,
+        statusFilter,
+        setCurrentPage,
+        setSearchQuery,
+        setStatusFilter,
+        refresh
+    } = useTransactions();
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
-    // Filter payments based on search query and status filter
-    const filteredPayments = useMemo(() => {
-        return MOCK_PAYMENTS.filter((payment) => {
-            const matchesStatus = statusFilter === 'ALL' || payment.status === statusFilter;
-            const cleanQuery = searchQuery.trim().toLowerCase();
-            const matchesSearch =
-                cleanQuery === '' ||
-                payment.paymentId.toLowerCase().includes(cleanQuery) ||
-                payment.originalPrice.toLowerCase().includes(cleanQuery) ||
-                payment.amountReceivedVal.toLowerCase().includes(cleanQuery) ||
-                payment.amountReceivedUnit.toLowerCase().includes(cleanQuery) ||
-                payment.amountSentVal.toLowerCase().includes(cleanQuery) ||
-                payment.amountSentUnit.toLowerCase().includes(cleanQuery) ||
-                payment.date.toLowerCase().includes(cleanQuery) ||
-                payment.time.toLowerCase().includes(cleanQuery);
-
-            return matchesStatus && matchesSearch;
+    // Format helpers
+    const formatDate = (isoString: string) => {
+        const d = new Date(isoString);
+        return d.toLocaleDateString(undefined, {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
         });
-    }, [searchQuery, statusFilter]);
+    };
+
+    const formatTime = (isoString: string) => {
+        const d = new Date(isoString);
+        return d.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
 
     // CSV Export Handler
-    const handleExport = () => {
-        const headers = [
-            'Payment ID',
-            'Order ID',
-            'Original Price',
-            'Amount Received',
-            'Amount Sent',
-            'Status',
-            'Created Date',
-            'Created Time',
-        ];
+    const handleExport = async () => {
+        try {
+            const data = await api.getTransactions({
+                status: statusFilter,
+                search: searchQuery,
+                page: 1,
+                limit: 1000
+            });
 
-        const rows = filteredPayments.map((p) => [
-            p.paymentId,
-            p.orderId || '',
-            p.originalPrice,
-            `${p.amountReceivedVal} ${p.amountReceivedUnit}`,
-            `${p.amountSentVal} ${p.amountSentUnit}`,
-            p.status,
-            p.date,
-            p.time,
-        ]);
+            const headers = [
+                'Payment ID',
+                'Order ID/Ref',
+                'Original Price',
+                'Amount Received',
+                'Amount Sent',
+                'Status',
+                'Created Date',
+                'Created Time',
+            ];
 
-        const csvContent = [
-            headers.join(','),
-            ...rows.map((r) => r.map((val) => `"${val.replace(/"/g, '""')}"`).join(',')),
-        ].join('\n');
+            const rows = data.items.map((t) => [
+                t.id,
+                t.externalReference || '',
+                t.originalPrice,
+                `${t.amountReceivedVal} ${t.amountReceivedUnit}`,
+                `${t.amountSentVal} ${t.amountSentUnit}`,
+                t.status,
+                formatDate(t.createdAt),
+                formatTime(t.createdAt),
+            ]);
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('download', `payments_export_${new Date().toISOString().slice(0, 10)}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            const csvContent = [
+                headers.join(','),
+                ...rows.map((r) => r.map((val) => `"${val.replace(/"/g, '""')}"`).join(',')),
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `payments_export_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (err) {
+            console.error('Failed to export CSV', err);
+        }
     };
 
     return (
-        <div className="flex flex-col gap-6 w-full">
-            {/* Top Toolbar: Title, Search, Filters, Export */}
+        <div className="flex flex-col gap-6 w-full relative">
+            {/* Top Toolbar */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
-                <h1 className="text-[22px] font-bold text-black">Payments</h1>
+                <h1 className="text-[22px] font-bold text-black font-sans">Payments</h1>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    {/* Search Input Box */}
+                    {/* Search */}
                     <div className="relative min-w-[240px]">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
@@ -226,7 +122,7 @@ const PaymentHistory: React.FC = () => {
                         />
                     </div>
 
-                    {/* Filters Dropdown */}
+                    {/* Filters */}
                     <div className="relative">
                         <Button
                             variant="outline"
@@ -245,197 +141,100 @@ const PaymentHistory: React.FC = () => {
 
                         {isDropdownOpen && (
                             <>
-                                {/* Click outside overlay to close */}
-                                <div
-                                    className="fixed inset-0 z-40"
-                                    onClick={() => setIsDropdownOpen(false)}
-                                />
+                                <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
                                 <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-md p-1 z-50 animate-in fade-in-0 zoom-in-95 duration-100">
                                     <div className="px-2 py-1.5 text-xs font-semibold text-gray-500">
                                         Filter by Status
                                     </div>
                                     <div className="my-1 bg-gray-100 h-px" />
-                                    <button
-                                        onClick={() => {
-                                            setStatusFilter('ALL');
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === 'ALL' ? 'bg-gray-50 font-semibold' : ''
+                                    {['ALL', 'CONFIRMED', 'PENDING', 'FAILED', 'EXPIRED'].map((status) => (
+                                        <button
+                                            key={status}
+                                            onClick={() => {
+                                                setStatusFilter(status);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${
+                                                statusFilter === status ? 'bg-gray-50 font-semibold' : ''
                                             }`}
-                                    >
-                                        All Payments
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setStatusFilter('CONFIRMED');
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === 'CONFIRMED' ? 'bg-gray-50 font-semibold text-emerald-600' : ''
-                                            }`}
-                                    >
-                                        Confirmed
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setStatusFilter('PENDING');
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === 'PENDING' ? 'bg-gray-50 font-semibold text-amber-600' : ''
-                                            }`}
-                                    >
-                                        Pending
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setStatusFilter('FAILED');
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full text-left px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === 'FAILED' ? 'bg-gray-50 font-semibold text-red-600' : ''
-                                            }`}
-                                    >
-                                        Failed
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setStatusFilter('EXPIRED');
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full text-left px-3.5 py-2.5 text-sm rounded-md cursor-pointer hover:bg-gray-100 block ${statusFilter === 'EXPIRED' ? 'bg-gray-50 font-semibold text-rose-600' : ''
-                                            }`}
-                                    >
-                                        Expired
-                                    </button>
+                                        >
+                                            {status === 'ALL' ? 'All Payments' : status.charAt(0) + status.slice(1).toLowerCase()}
+                                        </button>
+                                    ))}
                                 </div>
                             </>
                         )}
                     </div>
 
-                    {/* Export Button */}
+                    {/* Refresh */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={refresh}
+                        className="h-10 w-10 border border-gray-200 bg-white hover:bg-gray-50 rounded-lg cursor-pointer flex items-center justify-center"
+                        aria-label="Refresh list"
+                    >
+                        <RefreshCw className={`w-4 h-4 text-gray-500 ${loading ? 'animate-spin' : ''}`} />
+                    </Button>
+
+                    {/* Export */}
                     <Button
                         onClick={handleExport}
                         size="lg"
                         className="text-base p-5 hover:bg-neutral-800 cursor-pointer"
-
                     >
-                        <span className="text-sm">
-                            Export
-                        </span>
+                        <span className="text-sm">Export</span>
                     </Button>
                 </div>
             </div>
 
-            {/* Table Container */}
-            <div className="w-full bg-white border border-inactive rounded-[20px] overflow-hidden">
+            {/* Table */}
+            <div className="w-full bg-white border border-inactive rounded-[20px] overflow-hidden shadow-sm relative">
                 <Table>
                     <TableHeader className="bg-white">
                         <TableRow className="border-b border-gray-100 hover:bg-transparent">
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Payment ID
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Order ID
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Original Price
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Amount Received
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Amount Sent
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Status
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Created/ Last
-                                <p>Updated Date</p>
-                            </TableHead>
-                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">
-                                Created/ Last
-                                <p>Updated Date</p>
-                            </TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Payment ID</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Order ID / Ref</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Original Price</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Amount Received</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Amount Sent</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Status</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Created/ Last Date</TableHead>
+                            <TableHead className="text-text-muted font-medium text-sm font-sans py-4 px-6">Created/ Last Time</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredPayments.length > 0 ? (
-                            filteredPayments.map((payment) => (
+                        {transactions.length > 0 ? (
+                            transactions.map((payment) => (
                                 <TableRow
-                                    key={payment.paymentId}
-                                    className="even:bg-bg-zebra border-b border-gray-100 hover:bg-gray-50/50 transition-colors"
+                                    key={payment.id}
+                                    onClick={() => setSelectedTx(payment)}
+                                    className="even:bg-bg-zebra border-b border-gray-100 hover:bg-gray-50/50 transition-colors cursor-pointer"
                                 >
-                                    {/* Payment ID */}
-                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
-                                        {payment.paymentId}
-                                    </TableCell>
-
-                                    {/* Order ID */}
-                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-gray-500">
-                                        {payment.orderId || ''}
-                                    </TableCell>
-
-                                    {/* Original Price */}
-                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
-                                        {payment.originalPrice}
-                                    </TableCell>
-
-                                    {/* Amount Received (with green down-arrow block) */}
+                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">{payment.id}</TableCell>
+                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-gray-500">{payment.externalReference || '—'}</TableCell>
+                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">{payment.originalPrice}</TableCell>
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
                                         <div className="inline-flex items-center gap-2">
                                             <div className="inline-flex items-center justify-center w-[22px] h-[22px] bg-success-bg border border-success-border rounded-md text-success-icon">
                                                 <ArrowDown className="w-3.5 h-3.5 stroke-[3.5]" />
                                             </div>
-                                            <span>
-                                                {payment.amountReceivedVal} {payment.amountReceivedUnit}
-                                            </span>
+                                            <span>{payment.amountReceivedVal} {payment.amountReceivedUnit}</span>
                                         </div>
                                     </TableCell>
-
-                                    {/* Amount Sent (with red up-arrow block) */}
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
                                         <div className="inline-flex items-center gap-2">
                                             <div className="inline-flex items-center justify-center w-[22px] h-[22px] bg-danger-bg border border-danger-border rounded-md text-danger-icon">
                                                 <ArrowUp className="w-3.5 h-3.5 stroke-[3.5]" />
                                             </div>
-                                            <span>
-                                                {payment.amountSentVal} {payment.amountSentUnit}
-                                            </span>
+                                            <span>{payment.amountSentVal} {payment.amountSentUnit}</span>
                                         </div>
                                     </TableCell>
-
-                                    {/* Status Badge */}
                                     <TableCell className="py-4 px-6 text-sm font-medium font-sans">
-                                        {payment.status === 'CONFIRMED' && (
-                                            <span className="inline-block px-3 text-center bg-badge-confirmed text-white text-sm font-medium py-1.5 rounded-full select-none">
-                                                CONFIRMED
-                                            </span>
-                                        )}
-                                        {payment.status === 'PENDING' && (
-                                            <span className="inline-block px-3 text-center bg-badge-pending text-white text-sm font-medium py-1.5 rounded-full select-none">
-                                                PENDING
-                                            </span>
-                                        )}
-                                        {payment.status === 'FAILED' && (
-                                            <span className="inline-block px-3 text-center bg-badge-failed text-white text-sm font-medium py-1.5 rounded-full select-none">
-                                                FAILED
-                                            </span>
-                                        )}
-                                        {payment.status === 'EXPIRED' && (
-                                            <span className="inline-block px-3 text-center bg-badge-expired text-white text-sm font-medium py-1.5 rounded-full select-none">
-                                                EXPIRED
-                                            </span>
-                                        )}
+                                        <StatusBadge status={payment.status} />
                                     </TableCell>
-
-                                    {/* Created Date */}
-                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
-                                        {payment.date}
-                                    </TableCell>
-
-                                    {/* Created Time */}
-                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black">
-                                        {payment.time}
-                                    </TableCell>
+                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black whitespace-nowrap">{formatDate(payment.createdAt)}</TableCell>
+                                    <TableCell className="py-4 px-6 text-sm font-medium font-sans text-black whitespace-nowrap">{formatTime(payment.createdAt)}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
@@ -448,6 +247,23 @@ const PaymentHistory: React.FC = () => {
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Pagination Controls */}
+            <PaginationControls
+                currentPage={currentPage}
+                totalCount={totalCount}
+                pageSize={10}
+                totalPages={Math.ceil(totalCount / 10)}
+                loading={loading}
+                onPageChange={setCurrentPage}
+                typeLabel="entries"
+            />
+
+            {/* Transaction Detail Overlay Modal */}
+            <TransactionDetailModal
+                transaction={selectedTx}
+                onClose={() => setSelectedTx(null)}
+            />
         </div>
     );
 };
