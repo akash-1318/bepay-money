@@ -34,7 +34,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
         <div className="flex h-screen overflow-hidden bg-primary relative font-sans">
             {/* Desktop Sidebar Collapse Toggle */}
             <button
-                className={`hidden md:flex absolute top-24 size-9 bg-bg-card z-100! rounded-full justify-center items-center cursor-pointer transition-all duration-300 hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-primary focus:ring-white
+                className={`hidden md:flex absolute top-24 size-9 bg-bg-card z-50 rounded-full justify-center items-center cursor-pointer transition-all duration-300 hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-primary focus:ring-white
           ${isSidebarCollapsed ? 'left-24' : 'left-59'}`}
                 onClick={() => setIsSidebarCollapsed((prev) => !prev)}
                 aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
