@@ -21,7 +21,7 @@ export interface UserProfile {
 
 export const NAVIGATION_ITEMS: NavItem[] = [
     { to: '/', iconPath: HomeIcon, activeIconPath: HomeIconFilled, label: 'Dashboard' },
-    { to: '/payments', iconPath: WalletIcon, activeIconPath: WalletIconFilled, label: 'Payment History' },
+    { to: '/payment-history', iconPath: WalletIcon, activeIconPath: WalletIconFilled, label: 'Payment History' },
     { to: '/payment-links', iconPath: DollarWalletIcon, activeIconPath: DollarWalletIconFilled, label: 'Payment Links' },
 ];
 

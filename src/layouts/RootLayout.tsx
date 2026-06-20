@@ -68,7 +68,9 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
 
                 <main className="flex-1 overflow-y-auto pr-0 md:pr-8 pb-8 focus:outline-none" tabIndex={-1}>
                     <div className="w-full bg-primary rounded-lg shadow-sm">
-                        {children}
+                        <div className="px-7.25 pt-12.5 max-w-[1650px] min-h-[88dvh] mx-auto bg-secondary rounded-lg">
+                            {children}
+                        </div>
                     </div>
                 </main>
             </div>
