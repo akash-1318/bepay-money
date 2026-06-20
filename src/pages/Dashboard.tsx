@@ -22,6 +22,7 @@ const Dashboard: React.FC = () => {
 
     // API states
     const [loading, setLoading] = useState(true);
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [summary, setSummary] = useState<DashboardSummary>({
         totalReceived: 0,
         successfulCount: 0,
@@ -47,6 +48,7 @@ const Dashboard: React.FC = () => {
             console.error('Failed to load dashboard data', err);
         } finally {
             setLoading(false);
+            setIsFirstLoad(false);
         }
     };
 
@@ -63,7 +65,7 @@ const Dashboard: React.FC = () => {
         });
     };
 
-    if (loading && summary.totalReceived === 0 && recentTx.length === 0) {
+    if (loading && isFirstLoad) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-black" />
@@ -176,7 +178,16 @@ const Dashboard: React.FC = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {recentTx.length > 0 ? (
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="py-12 text-center text-gray-400 text-sm font-medium font-sans">
+                                        <div className="flex flex-col items-center justify-center gap-3">
+                                            <Loader2 className="w-8 h-8 animate-spin text-black" />
+                                            <p className="text-sm font-medium text-text-secondary font-sans">Loading recent activity...</p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : recentTx.length > 0 ? (
                                 recentTx.map((payment) => (
                                     <TableRow
                                         key={payment.id}
