@@ -34,8 +34,8 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
         <div className="flex h-screen overflow-hidden bg-primary relative font-sans">
             {/* Desktop Sidebar Collapse Toggle */}
             <button
-                className={`hidden md:flex absolute top-24 size-9 bg-bg-card z-100! rounded-full justify-center items-center cursor-pointer transition-all duration-300 hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] focus:ring-white
-          ${isSidebarCollapsed ? 'left-24' : 'left-52'}`}
+                className={`hidden md:flex absolute top-24 size-9 bg-bg-card z-100! rounded-full justify-center items-center cursor-pointer transition-all duration-300 hover:scale-105 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg-primary focus:ring-white
+          ${isSidebarCollapsed ? 'left-24' : 'left-59'}`}
                 onClick={() => setIsSidebarCollapsed((prev) => !prev)}
                 aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
@@ -67,7 +67,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
                 />
 
                 <main className="flex-1 overflow-y-auto pr-0 md:pr-8 pb-8 focus:outline-none" tabIndex={-1}>
-                    <div className="w-full bg-primary min-h-[88dvh] rounded-lg p-4 xl:p-7 shadow-sm">
+                    <div className="w-full bg-primary rounded-lg shadow-sm">
                         {children}
                     </div>
                 </main>

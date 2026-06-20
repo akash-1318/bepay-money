@@ -26,6 +26,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
 ];
 
 export const MOCK_USER: UserProfile = {
-    name: 'Nishi Sharma',
+    name: 'Nehal Sharma',
     location: 'New Delhi, India',
 };
