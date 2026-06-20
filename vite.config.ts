@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config'
 import preact from '@preact/preset-vite'
 import tailwindcss from '@tailwindcss/vite'
 import path from "path";
@@ -14,5 +15,9 @@ export default defineConfig({
       "react-dom/test-utils": "preact/compat/test-utils",
       "react/jsx-runtime": "preact/jsx-runtime"
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
   },
 })
