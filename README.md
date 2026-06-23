@@ -2,6 +2,8 @@
 
 A fully responsive, non-custodial crypto payments dashboard for merchants to create payment links, monitor incoming payments, and review transaction activity.
 
+**🎥 Walkthrough Video:** https://www.loom.com/share/5baa2e03035d4dddb2a134c3fcdc2521
+
 ## Setup and Run Instructions
 
 This project is built using React (Preact compat), Vite, TypeScript, and Tailwind CSS.
